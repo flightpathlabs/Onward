@@ -60,5 +60,6 @@ function ns.ForgetLearned()
     ns.db.quests = {}
     ns.db.links = {}
     ns.db.paid = {}
+    ns.Send("LEARNED_FORGOTTEN")
     ns.Send("REWARDS_CHANGED")
 end

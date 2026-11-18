@@ -18,8 +18,30 @@ local Text = ns.Text
 -- Lines at most, so a busy quest hub doesn't double the tooltip's height.
 local MAX_LINES = 4
 
+-- Seconds a quest's chain is reused for, since Questie redraws its tooltip
+-- each time Shift goes up or down.
+local REUSE_FOR = 2
+
 local adding = false
 local lastLine -- the text of the last line Onward added, to spot a repeat Show
+local built = {} -- quest ID -> { summary, at }
+
+local function Summary(id)
+    local entry = built[id]
+    if entry and GetTime() - entry.at < REUSE_FOR then
+        return entry.summary
+    end
+    local summary = ns.Chain.Build(id)
+    built[id] = { summary = summary, at = GetTime() }
+    return summary
+end
+
+ns.Listen("REWARDS_CHANGED", function()
+    built = {}
+end)
+ns.Listen("CHAINS_CHANGED", function()
+    built = {}
+end)
 
 local function QuestieQuests(tooltip)
     local order = tooltip.npcAndObjectOrder
@@ -92,7 +114,7 @@ local function AddLines(tooltip)
     local lines = {}
     local extra = 0
     for _, id in ipairs(ids) do
-        local summary = ns.Chain.Build(id)
+        local summary = Summary(id)
         if summary then
             -- With one quest on the tooltip the line needs no name; with
             -- several each says whose it is.

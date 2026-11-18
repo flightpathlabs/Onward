@@ -20,7 +20,14 @@ ns.Rewards = Rewards
 -- Seconds before asking the game about the same quest again.
 local RETRY_AFTER = 30
 
+-- At most this many quests asked about in any few seconds. A long chain,
+-- or a map tooltip over a busy quest hub, would otherwise ask about dozens
+-- at once; the rest are asked about the next time the chain is drawn.
+local REQUESTS_PER_WINDOW = 10
+local REQUEST_WINDOW = 3
+
 local requested = {} -- quest ID -> GetTime() of the last request
+local windowStart, windowCount = 0, 0
 
 -- Rewards read from the game this session but not saved, when the player
 -- has turned learning off.
@@ -133,11 +140,19 @@ local function ReadFromClient(id)
 end
 
 local function Request(id)
+    local now = GetTime()
     local last = requested[id]
-    if last and GetTime() - last < RETRY_AFTER then
+    if last and now - last < RETRY_AFTER then
         return
     end
-    requested[id] = GetTime()
+    if now - windowStart > REQUEST_WINDOW then
+        windowStart, windowCount = now, 0
+    end
+    if windowCount >= REQUESTS_PER_WINDOW then
+        return
+    end
+    windowCount = windowCount + 1
+    requested[id] = now
     C_QuestLog.RequestLoadQuestByID(id)
     if C_TaskQuest and C_TaskQuest.RequestPreloadRewardData then
         pcall(C_TaskQuest.RequestPreloadRewardData, id)
@@ -211,15 +226,9 @@ function Rewards.Get(id)
     return result
 end
 
---- Drops what this session read from the game, so a reload of the quest
---- data is read again.
-function Rewards.ForgetSession()
+-- Forgetting what was learned forgets this session's reads too, so every
+-- quest is read afresh.
+ns.Listen("LEARNED_FORGOTTEN", function()
     session = {}
     requested = {}
-end
-
-ns.Listen("REWARDS_CHANGED", function(questID)
-    if not questID then
-        Rewards.ForgetSession()
-    end
 end)
