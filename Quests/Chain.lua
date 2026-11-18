@@ -386,6 +386,11 @@ local function IsGrey(level)
     return GetQuestDifficultyColor(level) == QuestDifficultyColors.trivial
 end
 
+-- QuestieDB marks some quests' levels as 0 or -1 (events, scaled quests).
+local function KnownLevel(level)
+    return level ~= nil and level > 0
+end
+
 local function QuestLevel(info)
     if info.level and info.level > 0 then
         return info.level
@@ -410,17 +415,21 @@ local function BestQuality(rewards)
     return best
 end
 
---- "worth" or "skip" and the reason, or nil when there's nothing to say
---- either way.
+--- "worth" or "skip", the reason, and the kind of mark the reason comes
+--- from if any (so the reason isn't shown twice), or nil when there's
+--- nothing to say either way.
 ---
 --- Worth doing: the chain reaches an attunement, a key or a class quest,
---- gives a rare or better item, pays half a level of XP or more, or is grey
---- now but leads on to quests at the character's level. Safe to skip: the
---- quest is grey and so is everything after it, with none of the above.
+--- teaches a spell, gives a rare or better item, pays half a level of XP or
+--- more, or is grey now but leads on to quests at the character's level.
+--- Safe to skip: the quest is grey and so is everything after it, with none
+--- of the above. Quests of unknown level don't count either way.
+local WORTH_MARKS = { attunement = true, class = true, key = true, spell = true }
+
 local function Verdict(summary, root, rootRewards)
     for _, mark in ipairs(summary.marks) do
-        if mark.kind == "attunement" or mark.kind == "class" or mark.kind == "key" then
-            return "worth", mark.text
+        if WORTH_MARKS[mark.kind] then
+            return "worth", mark.text, mark.kind
         end
     end
 
@@ -432,7 +441,10 @@ local function Verdict(summary, root, rootRewards)
         end
     end
     if best and best >= RARE then
-        return "worth", best >= EPIC and "An epic reward" or "A rare reward"
+        if best >= EPIC then
+            return "worth", "An epic reward", "epic"
+        end
+        return "worth", "A rare reward"
     end
 
     local needed = UnitXPMax("player")
@@ -446,15 +458,21 @@ local function Verdict(summary, root, rootRewards)
     end
 
     if IsGrey(QuestLevel(root)) then
+        local known = 0
         for _, step in ipairs(summary.steps) do
-            if not IsGrey(step.level) then
-                return "worth", "Grey for you, but it leads to quests at your level"
+            if KnownLevel(step.level) then
+                known = known + 1
+                if not IsGrey(step.level) then
+                    return "worth", "Grey for you, but it leads to quests at your level"
+                end
             end
         end
-        if #summary.steps > 0 then
+        if #summary.steps == 0 then
+            return "skip", "Grey for you, and it leads nowhere"
+        end
+        if known == #summary.steps then
             return "skip", "Grey for you, and so is the rest of its chain"
         end
-        return "skip", "Grey for you, and it leads nowhere"
     end
     return nil
 end
@@ -561,7 +579,7 @@ function Chain.Build(rootID, light)
 
     local rootRewards = Rewards.Get(rootID)
     summary.marks = Marks(summary, root, rootRewards)
-    summary.verdict, summary.reason = Verdict(summary, root, rootRewards)
+    summary.verdict, summary.reason, summary.reasonKind = Verdict(summary, root, rootRewards)
 
     if #summary.steps == 0 and #summary.marks == 0 and not summary.verdict then
         return nil
@@ -573,12 +591,15 @@ end
 -- change a chain happens.
 local counts = {}
 
-ns.Listen("CHAINS_CHANGED", function()
+local function ForgetCounts()
     counts = {}
-end)
-ns.OnEvent("QUEST_ACCEPTED", function()
-    counts = {}
-end)
+end
+
+ns.Listen("CHAINS_CHANGED", ForgetCounts)
+ns.Listen("LEARNED_FORGOTTEN", ForgetCounts)
+ns.OnEvent("QUEST_ACCEPTED", ForgetCounts)
+ns.OnEvent("QUEST_REMOVED", ForgetCounts)
+ns.OnEvent("SKILL_LINES_CHANGED", ForgetCounts)
 
 --- How many quests follow this one for the character, without asking the
 --- server anything. Cheap enough for every icon on a map.

@@ -73,7 +73,7 @@ function Text.Verdict(summary, withReason)
     end
     local said = false
     for _, mark in ipairs(summary.marks or {}) do
-        if mark.text == summary.reason then
+        if summary.reasonKind and mark.kind == summary.reasonKind then
             said = ns.settings.marks
         end
     end

@@ -15,8 +15,12 @@ Not released yet: this is work in progress.
 - **Marks** for quests that matter: class quests, attunements and dungeon
   keys, spells a quest teaches, and epic rewards, also when they come
   further along the chain.
-- In the **quest window**, the **quest log**, and as one line on
-  **Questie's map icons**.
+- **Worth doing or safe to skip**, with the reason, so you know which
+  quests to pick up and which to leave.
+- In the **quest window** and the **quest log**, as one line on
+  **Questie's map icons**, and as a short "+4" after each quest in the
+  quest log and quest givers' lists. Questie's "!" icons on the map get a
+  small number too.
 
 **Getting started**
 

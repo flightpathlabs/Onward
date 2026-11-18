@@ -29,6 +29,20 @@ First version.
   the level cap, and which quest the game offered straight after another,
   so chains get more complete as you play.
 
+**In lists and on the map**
+
+- "+4" after each quest in the quest log and in a quest giver's list, for
+  four more quests in its chain.
+- A small number beside Questie's "!" on the world map and minimap.
+
+**Worth doing or safe to skip**
+
+- "Worth doing" when the chain opens a dungeon or raid, is a class quest,
+  gives a rare or epic item, pays half a level of XP or more, or leads
+  from grey quests to ones at your level. "Safe to skip" when the quest is
+  grey for you and so is everything after it. The reason shows with it.
+- In lists, a tick for worth doing and a grey "skip".
+
 **Marks**
 
 - Class quests, attunements (Molten Core, Onyxia's Lair, Blackwing Lair,

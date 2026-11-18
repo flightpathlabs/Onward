@@ -24,10 +24,16 @@ local GAP = 6
 local notes = setmetatable({}, { __mode = "k" })
 local placed = setmetatable({}, { __mode = "k" })
 
---- The note for one quest, or nil when there's nothing to say.
----@param questID number
----@return string|nil
-function Lists.Note(questID)
+-- quest ID -> its note (false for none). The quest log redraws its list on
+-- every quest log update, often in a fight, so a note is worked out once
+-- and kept until something that could change it happens.
+local cache = {}
+
+local function Forget()
+    cache = {}
+end
+
+local function Build(questID)
     local summary = ns.Chain.Build(questID)
     if not summary then
         return nil
@@ -41,6 +47,18 @@ function Lists.Note(questID)
         return GRAY_FONT_COLOR:WrapTextInColorCode(text and (text .. " skip") or "skip")
     end
     return text
+end
+
+--- The note for one quest, or nil when there's nothing to say.
+---@param questID number
+---@return string|nil
+function Lists.Note(questID)
+    local note = cache[questID]
+    if note == nil then
+        note = Build(questID) or false
+        cache[questID] = note
+    end
+    return note or nil
 end
 
 local function Width(text)
@@ -70,14 +88,18 @@ local function Place(button, title, questID)
     note:SetTextColor(title:GetTextColor())
     note:SetText(text)
 
+    -- Only where it fits on the title's own line: a long name that wraps
+    -- has no known end to put it after, and laying it over the name, or
+    -- over Blizzard's icons beside it, would be worse than leaving it out.
     note:ClearAllPoints()
     local room = title:GetWidth()
     local used = Width(title)
-    if room <= 0 or used + GAP + note:GetStringWidth() <= room then
-        note:SetPoint("LEFT", title, "LEFT", used + GAP, 0)
-    else
-        note:SetPoint("BOTTOMRIGHT", title, "BOTTOMRIGHT", 0, 0)
+    local oneLine = not title.GetNumLines or title:GetNumLines() <= 1
+    if not oneLine or (room > 0 and used + GAP + note:GetStringWidth() > room) then
+        note:Hide()
+        return
     end
+    note:SetPoint("LEFT", title, "LEFT", used + GAP, 0)
     note:Show()
 end
 
@@ -146,9 +168,17 @@ if GossipSharedActiveQuestButtonMixin then
     end)
 end
 
+-- The greeting panel's XML names its OnShow function directly, so a hook
+-- on the global only sees the calls made by name (when the quest log
+-- changes while it's open). A script hook sees it open.
 hooksecurefunc("QuestFrameGreetingPanel_OnShow", function()
     Safely(UpdateGreeting)
 end)
+if QuestFrameGreetingPanel then
+    QuestFrameGreetingPanel:HookScript("OnShow", function()
+        Safely(UpdateGreeting)
+    end)
+end
 
 -- When rewards or chain data come in, or a setting changes, the notes on
 -- screen catch up, once, a moment after the last change.
@@ -170,6 +200,15 @@ local function QueueRefresh()
     end
 end
 
-ns.Listen("REWARDS_CHANGED", QueueRefresh)
-ns.Listen("CHAINS_CHANGED", QueueRefresh)
-ns.Listen("SETTINGS_CHANGED", QueueRefresh)
+local function Changed()
+    Forget()
+    QueueRefresh()
+end
+
+ns.Listen("REWARDS_CHANGED", Changed)
+ns.Listen("CHAINS_CHANGED", Changed)
+ns.Listen("SETTINGS_CHANGED", Changed)
+ns.Listen("LEARNED_FORGOTTEN", Changed)
+ns.OnEvent("QUEST_ACCEPTED", Changed)
+ns.OnEvent("QUEST_REMOVED", Changed)
+ns.OnEvent("PLAYER_LEVEL_UP", Changed)

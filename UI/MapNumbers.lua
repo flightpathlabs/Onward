@@ -48,6 +48,11 @@ local function Number(icon)
         number = icon:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmall")
         number:SetPoint("LEFT", icon, "RIGHT", -3, -4)
         numbers[icon] = number
+        -- Questie hides an icon before using it for something else, so the
+        -- number goes with it rather than waiting for the next look.
+        icon:HookScript("OnHide", function()
+            number:Hide()
+        end)
     end
     number:SetText(count)
     number:Show()
