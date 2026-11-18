@@ -19,11 +19,17 @@ ns.DEFAULT_SETTINGS = {
     questFrame = true,
     questLog = true,
     mapTooltip = true,
+    -- "+4" after each quest in the quest log and quest givers' lists.
+    listCounts = true,
+    -- The number beside Questie's "!" on the map and minimap.
+    mapNumbers = true,
 
     -- The row of reward items under the totals.
     items = true,
     -- Class quest, attunement, key, spell and epic marks.
     marks = true,
+    -- "Worth doing" and "Safe to skip".
+    verdict = true,
     -- Remember the rewards of quests you open, so later chains know them.
     learn = true,
 }

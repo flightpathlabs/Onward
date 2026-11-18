@@ -87,6 +87,11 @@ local function LineFor(summary, title)
     if marks then
         table.insert(parts, marks)
     end
+    local verdict = Text.Verdict(summary)
+    if verdict then
+        local color = summary.verdict == "worth" and GREEN_FONT_COLOR or GRAY_FONT_COLOR
+        table.insert(parts, color:WrapTextInColorCode(verdict))
+    end
     if #parts == 0 then
         return nil
     end

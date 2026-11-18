@@ -77,6 +77,19 @@ local function AddOptions()
         "On Questie's map icons",
         "One line on the tooltip of a quest giver's icon on the map and minimap. Needs Questie."
     )
+    AddCheckbox(
+        "listCounts",
+        "In quest lists",
+        "A short note after each quest in the quest log and in a quest giver's list: "
+            .. '"+4" for four more quests in its chain, a tick if it\'s worth doing, "skip" '
+            .. "if it's safe to skip."
+    )
+    AddCheckbox(
+        "mapNumbers",
+        "Numbers on Questie's map icons",
+        'A small number beside each "!" on the map and minimap: how many quests follow '
+            .. "the one on offer there. Needs Questie."
+    )
 
     AddHeader("What it shows")
     AddCheckbox(
@@ -84,6 +97,13 @@ local function AddOptions()
         "Reward items",
         "The items the rest of the chain gives, with their tooltips. A quest that lets you "
             .. 'choose shows all of its choices after "One of".'
+    )
+    AddCheckbox(
+        "verdict",
+        "Say what's worth doing",
+        "Worth doing: the chain opens a dungeon or raid, is a class quest, gives a rare or "
+            .. "epic item, pays half a level of XP, or leads from grey quests to ones at your "
+            .. "level. Safe to skip: the quest is grey for you and so is everything after it."
     )
     AddCheckbox(
         "marks",

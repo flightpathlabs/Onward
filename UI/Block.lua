@@ -118,6 +118,9 @@ local function CreateBlock(parent)
     block.marks = block:CreateFontString(nil, "ARTWORK", "QuestFont")
     block.marks:SetJustifyH("LEFT")
 
+    block.verdict = block:CreateFontString(nil, "ARTWORK", "QuestFont")
+    block.verdict:SetJustifyH("LEFT")
+
     block.more = block:CreateFontString(nil, "ARTWORK", "QuestFont")
 
     block.buttons = {}
@@ -142,7 +145,7 @@ local function MatchQuestText(block)
     if body then
         local font = body:GetFontObject()
         local r, g, b = body:GetTextColor()
-        for _, text in ipairs({ block.totals.text, block.marks, block.more }) do
+        for _, text in ipairs({ block.totals.text, block.marks, block.verdict, block.more }) do
             text:SetFontObject(font)
             text:SetTextColor(r, g, b)
         end
@@ -238,7 +241,8 @@ end
 local function Fill(block, summary, width)
     local totals = Text.Totals(summary)
     local marks = ns.settings.marks and Text.Marks(summary.marks) or nil
-    if not totals and not marks then
+    local verdict = Text.Verdict(summary, true)
+    if not totals and not marks and not verdict then
         return false
     end
 
@@ -263,6 +267,17 @@ local function Fill(block, summary, width)
         y = y - height - LINE_GAP
     else
         block.totals:Hide()
+    end
+
+    if verdict then
+        block.verdict:ClearAllPoints()
+        block.verdict:SetPoint("TOPLEFT", 0, y)
+        block.verdict:SetWidth(width)
+        block.verdict:SetText(verdict)
+        block.verdict:Show()
+        y = y - block.verdict:GetStringHeight() - LINE_GAP
+    else
+        block.verdict:Hide()
     end
 
     if marks then

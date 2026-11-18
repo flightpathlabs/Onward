@@ -8,6 +8,7 @@ ns.Text = Text
 
 local SEPARATOR = "  ·  "
 local MARK_ICON_SIZE = 14
+local WORTH_ICON = "|TInterface\\RaidFrame\\ReadyCheck-Ready:14:14|t"
 
 local function Number(value)
     if BreakUpLargeNumbers then
@@ -59,6 +60,28 @@ local function Icon(icon)
     end
     return CreateTextureMarkup(icon, 64, 64, MARK_ICON_SIZE, MARK_ICON_SIZE, 0.07, 0.93, 0.07, 0.93)
         .. " "
+end
+
+--- "Worth doing" or "Safe to skip", with the reason when asked for and
+--- when a mark doesn't already say the same, or nil.
+---@param summary table
+---@param withReason boolean|nil
+---@return string|nil
+function Text.Verdict(summary, withReason)
+    if not ns.settings.verdict or not summary.verdict then
+        return nil
+    end
+    local said = false
+    for _, mark in ipairs(summary.marks or {}) do
+        if mark.text == summary.reason then
+            said = ns.settings.marks
+        end
+    end
+    local text = summary.verdict == "worth" and (WORTH_ICON .. " Worth doing") or "Safe to skip"
+    if withReason and summary.reason and not said then
+        text = ("%s: %s"):format(text, summary.reason)
+    end
+    return text
 end
 
 --- The marks on one line, each with its icon when it has one.
@@ -120,6 +143,10 @@ end
 ---@param summary table
 function Text.FillSteps(tooltip, summary)
     GameTooltip_SetTitle(tooltip, summary.fork and "Quests this opens" or "Where this leads")
+    local verdict = Text.Verdict(summary, true)
+    if verdict then
+        GameTooltip_AddNormalLine(tooltip, verdict, true)
+    end
 
     for _, step in ipairs(summary.steps) do
         local name = StepName(step)

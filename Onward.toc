@@ -23,6 +23,8 @@ Quests\Chain.lua
 UI\Text.lua
 UI\Block.lua
 UI\MapTooltip.lua
+UI\Lists.lua
+UI\MapNumbers.lua
 UI\Settings.lua
 
 Dev\Probe.lua

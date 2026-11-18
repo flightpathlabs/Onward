@@ -26,7 +26,16 @@ local MAX_STEPS = 40
 local MAX_MARKS = 2
 
 local KEY_CLASS = Enum.ItemClass.Key
+local RARE = Enum.ItemQuality.Rare
 local EPIC = Enum.ItemQuality.Epic
+
+-- A chain is worth doing on XP alone when it pays at least this share of
+-- a level, counting the quest itself.
+local WORTH_LEVEL_SHARE = 0.5
+
+-- What a step gives when only the chain's shape is wanted, for the counts
+-- in lists and on the map, which shouldn't ask the server about rewards.
+local NO_REWARDS = { known = false, items = {}, choices = {}, spells = {} }
 
 local function Done(id)
     return C_QuestLog.IsQuestFlaggedCompleted(id)
@@ -337,7 +346,7 @@ local function Marks(summary, root, rootRewards)
 end
 
 local function AddStep(summary, info, needs, isBranch)
-    local rewards = Rewards.Get(info.id)
+    local rewards = summary.light and NO_REWARDS or Rewards.Get(info.id)
     local step = {
         info = info,
         id = info.id,
@@ -368,8 +377,90 @@ local function AddStep(summary, info, needs, isBranch)
     end
 end
 
+-- Whether a quest of this level shows grey for the character: too far
+-- below them to give much, and hidden by Questie by default.
+local function IsGrey(level)
+    if not level or level <= 0 or not GetQuestDifficultyColor or not QuestDifficultyColors then
+        return false
+    end
+    return GetQuestDifficultyColor(level) == QuestDifficultyColors.trivial
+end
+
+local function QuestLevel(info)
+    if info.level and info.level > 0 then
+        return info.level
+    end
+    if C_QuestLog.IsOnQuest(info.id) then
+        return C_QuestLog.GetQuestDifficultyLevel(info.id)
+    end
+    return nil
+end
+
+-- The best item quality anywhere in a set of rewards, or nil.
+local function BestQuality(rewards)
+    local best
+    for _, list in ipairs({ rewards.items, rewards.choices }) do
+        for _, item in ipairs(list) do
+            local quality = Quality(item.id)
+            if quality and (not best or quality > best) then
+                best = quality
+            end
+        end
+    end
+    return best
+end
+
+--- "worth" or "skip" and the reason, or nil when there's nothing to say
+--- either way.
+---
+--- Worth doing: the chain reaches an attunement, a key or a class quest,
+--- gives a rare or better item, pays half a level of XP or more, or is grey
+--- now but leads on to quests at the character's level. Safe to skip: the
+--- quest is grey and so is everything after it, with none of the above.
+local function Verdict(summary, root, rootRewards)
+    for _, mark in ipairs(summary.marks) do
+        if mark.kind == "attunement" or mark.kind == "class" or mark.kind == "key" then
+            return "worth", mark.text
+        end
+    end
+
+    local best = BestQuality(rootRewards)
+    for _, step in ipairs(summary.steps) do
+        local quality = BestQuality(step.rewards)
+        if quality and (not best or quality > best) then
+            best = quality
+        end
+    end
+    if best and best >= RARE then
+        return "worth", best >= EPIC and "An epic reward" or "A rare reward"
+    end
+
+    local needed = UnitXPMax("player")
+    local xp = summary.xp + (rootRewards.xp or 0)
+    if not ns.AtMaxLevel() and needed and needed > 0 and xp >= needed * WORTH_LEVEL_SHARE then
+        local levels = xp / needed
+        if levels >= 1 then
+            return "worth", ("About %.1f levels of XP"):format(levels)
+        end
+        return "worth", ("About %d%% of a level in XP"):format(math.floor(levels * 100 + 0.5))
+    end
+
+    if IsGrey(QuestLevel(root)) then
+        for _, step in ipairs(summary.steps) do
+            if not IsGrey(step.level) then
+                return "worth", "Grey for you, but it leads to quests at your level"
+            end
+        end
+        if #summary.steps > 0 then
+            return "skip", "Grey for you, and so is the rest of its chain"
+        end
+        return "skip", "Grey for you, and it leads nowhere"
+    end
+    return nil
+end
+
 --- Everything about where a quest leads, or nil when there's nothing to
---- say: no steps after it and nothing that marks it.
+--- say: no steps after it, nothing that marks it and no verdict.
 ---
 --- summary.steps        the quests still to do after this one, in order
 --- summary.fork         true when the quest opens several quests at once
@@ -383,9 +474,14 @@ end
 --- summary.marks        up to two { kind, text, icon }
 --- summary.endsFor      "race" or "class" when the chain goes on for
 ---                      other characters but not this one
+--- summary.verdict      "worth", "skip" or nil, with summary.reason
+---
+--- With light set, only the steps are worked out: no rewards, marks or
+--- verdict, and nothing is asked of the server.
 ---@param rootID number
+---@param light boolean|nil
 ---@return table|nil
-function Chain.Build(rootID)
+function Chain.Build(rootID, light)
     if not rootID or rootID == 0 then
         return nil
     end
@@ -401,6 +497,7 @@ function Chain.Build(rootID)
         unknown = 0,
         items = {},
         choiceGroups = {},
+        light = light,
     }
 
     local visited = { [rootID] = true }
@@ -457,10 +554,42 @@ function Chain.Build(rootID)
         summary.branches = {}
     end
 
-    summary.marks = Marks(summary, root, Rewards.Get(rootID))
+    if light then
+        summary.marks = {}
+        return summary
+    end
 
-    if #summary.steps == 0 and #summary.marks == 0 then
+    local rootRewards = Rewards.Get(rootID)
+    summary.marks = Marks(summary, root, rootRewards)
+    summary.verdict, summary.reason = Verdict(summary, root, rootRewards)
+
+    if #summary.steps == 0 and #summary.marks == 0 and not summary.verdict then
         return nil
     end
     return summary
+end
+
+-- Step counts for the lists and the map, kept until something that could
+-- change a chain happens.
+local counts = {}
+
+ns.Listen("CHAINS_CHANGED", function()
+    counts = {}
+end)
+ns.OnEvent("QUEST_ACCEPTED", function()
+    counts = {}
+end)
+
+--- How many quests follow this one for the character, without asking the
+--- server anything. Cheap enough for every icon on a map.
+---@param rootID number
+---@return number
+function Chain.Count(rootID)
+    local count = counts[rootID]
+    if count == nil then
+        local summary = Chain.Build(rootID, true)
+        count = summary and #summary.steps or 0
+        counts[rootID] = count
+    end
+    return count
 end
