@@ -221,6 +221,13 @@ local function AddFollower(prerequisite, id)
         list = {}
         followers[prerequisite] = list
     end
+    -- A quest can name the same prerequisite twice (in both lists, or as
+    -- "taken" and "done"); it still follows on only once.
+    for _, existing in ipairs(list) do
+        if existing == id then
+            return
+        end
+    end
     table.insert(list, id)
 end
 

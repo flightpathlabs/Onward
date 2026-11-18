@@ -8,10 +8,11 @@ local _, ns = ...
 -- is held, each with its XP and money, so Onward adds only what that list
 -- doesn't say: the total, the items and the marks.
 --
--- Questie has no public hook for its map tooltips. It fills GameTooltip and
--- leaves the quests it listed on the tooltip (npcAndObjectOrder), with the
--- icon it belongs to (_owner), then calls Show. Onward reads those after
--- Show; if a Questie update changes them, the line just doesn't appear.
+-- Questie has no public hook for its map tooltips. It fills GameTooltip,
+-- leaves the quests it listed on the tooltip (npcAndObjectOrder) with the
+-- icon it belongs to (_owner), sets ShownAsMapIcon and calls Show. Onward
+-- reads those after Show; if a Questie update changes them, the line just
+-- doesn't appear.
 
 local Text = ns.Text
 
@@ -23,7 +24,9 @@ local MAX_LINES = 4
 local REUSE_FOR = 2
 
 local adding = false
-local lastLine -- the text of the last line Onward added, to spot a repeat Show
+-- Whether Onward's lines are on the tooltip now. Cleared whenever the
+-- tooltip is, so a later Show without a redraw doesn't add them twice.
+local added = false
 local built = {} -- quest ID -> { summary, at }
 
 local function Summary(id)
@@ -46,7 +49,7 @@ end)
 local function QuestieQuests(tooltip)
     local order = tooltip.npcAndObjectOrder
     local owner = tooltip:GetOwner()
-    if type(order) ~= "table" or not owner then
+    if not tooltip.ShownAsMapIcon or type(order) ~= "table" or not owner then
         return nil
     end
     if owner ~= tooltip._owner and owner ~= tooltip._showOwner then
@@ -91,26 +94,14 @@ local function LineFor(summary, title)
     return NORMAL_FONT_COLOR:WrapTextInColorCode(label) .. " " .. table.concat(parts, "  ·  ")
 end
 
-local function LastLineText(tooltip)
-    local count = tooltip:NumLines()
-    local line = count > 0 and _G[tooltip:GetName() .. "TextLeft" .. count]
-    return line and line:GetText()
-end
-
 local function AddLines(tooltip)
-    if adding or not ns.settings or not ns.settings.mapTooltip then
+    if adding or added or not ns.settings or not ns.settings.mapTooltip then
         return
     end
     local ids = QuestieQuests(tooltip)
     if not ids or #ids == 0 then
         return
     end
-    -- Something called Show again without Questie redrawing first: the
-    -- lines are already there.
-    if lastLine and LastLineText(tooltip) == lastLine then
-        return
-    end
-
     local lines = {}
     local extra = 0
     for _, id in ipairs(ids) do
@@ -144,7 +135,7 @@ local function AddLines(tooltip)
     for _, line in ipairs(lines) do
         tooltip:AddLine(line, 1, 1, 1, true)
     end
-    lastLine = LastLineText(tooltip)
+    added = true
     tooltip:Show()
     adding = false
 end
@@ -157,6 +148,6 @@ hooksecurefunc(GameTooltip, "Show", function(tooltip)
     end
 end)
 
-GameTooltip:HookScript("OnHide", function()
-    lastLine = nil
+GameTooltip:HookScript("OnTooltipCleared", function()
+    added = false
 end)

@@ -64,6 +64,7 @@ read_globals = {
     "QuestInfo_ShowSpacer",
     "Settings",
     "StaticPopup_Show",
+    "UIFrameFadeIn",
     "hooksecurefunc",
 
     -- Frames and widgets

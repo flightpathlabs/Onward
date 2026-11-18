@@ -399,6 +399,32 @@ hooksecurefunc("QuestInfo_Display", function(template, page)
     end
 end)
 
+-- While a quest's text writes itself out, Blizzard keeps the objectives
+-- and rewards hidden and fades them in at the end. The block follows them,
+-- without touching Blizzard's own list of what fades.
+hooksecurefunc("QuestInfo_HideAlphaDependentText", function(page)
+    local block = blocks[page]
+    if block then
+        block:SetAlpha(0)
+    end
+end)
+
+hooksecurefunc("QuestInfo_ShowAlphaDependentText", function(page)
+    local block = blocks[page]
+    if block then
+        block:SetAlpha(1)
+    end
+end)
+
+hooksecurefunc("QuestInfo_FadeInAlphaDependentText", function(page, fadeTime)
+    local block = blocks[page]
+    if block and block:IsShown() then
+        UIFrameFadeIn(block, fadeTime)
+    elseif block then
+        block:SetAlpha(1)
+    end
+end)
+
 -- The server answers about rewards a moment after it's asked, and several
 -- answers often come together, so the blocks redraw once after the last.
 local redrawPending = false

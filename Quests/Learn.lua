@@ -6,8 +6,9 @@ local _, ns = ...
 --   * what a hand-in actually paid at the level cap, where XP turns into
 --     money and nothing else says how much
 --   * which quest the game offers straight after a hand-in, from the same
---     person, which is how the game itself hands out the next step of a
---     chain
+--     person with no list of quests in between, which is how the game
+--     itself hands out the next step of a chain. The chain walk only uses
+--     these where QuestieDB knows nothing that follows the quest.
 --
 -- What the player saw always beats the data.
 
@@ -112,6 +113,14 @@ ns.OnEvent("QUEST_DETAIL", function()
     end
     lastHandIn = nil
 end)
+
+-- A list of quests or a chat with the quest giver in between means the
+-- player picked the next quest, not the game.
+local function Browsing()
+    lastHandIn = nil
+end
+ns.OnEvent("GOSSIP_SHOW", Browsing)
+ns.OnEvent("QUEST_GREETING", Browsing)
 
 ns.OnEvent("QUEST_COMPLETE", function()
     Learn.FromDialog()

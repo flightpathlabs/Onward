@@ -3,10 +3,12 @@ local _, ns = ...
 -- Walks a quest's chain forward and adds up what the rest of it gives.
 --
 -- The main line follows the data's "next quest", then a breadcrumb's
--- target, then a link Onward saw the game make, then the one quest that
--- needs this one done first. Where a quest opens several others, the main
--- line ends and the others are counted as branches: there's no telling
--- which way the player will go, so their rewards aren't added in.
+-- target, then the one quest that needs this one done first, and only
+-- where the data has nothing, a link Onward saw the game make. Where a
+-- quest opens several others, the main line ends and the others are
+-- counted as branches: there's no telling which way the player will go,
+-- so their rewards aren't added in. Unless a later quest needs them all:
+-- then they're steps done side by side.
 --
 -- Each step is checked against the current character: race, class,
 -- profession, quests that shut each other out, and quests already done.
@@ -35,16 +37,17 @@ local function InLog(id)
 end
 
 --- Whether the character has a profession (or other skill line), or nil
---- when the game won't say.
+--- when the game won't say. Only a clear no cuts a step: cutting a step
+--- the player can do is worse than showing one they can't.
 local function KnowsSkill(skillID)
     if not (C_SkillInfo and C_SkillInfo.GetSkillLineInfoByID) then
         return nil
     end
     local ok, info = pcall(C_SkillInfo.GetSkillLineInfoByID, skillID)
-    if not ok then
+    if not ok or type(info) ~= "table" or info.rank == nil then
         return nil
     end
-    return info ~= nil and (info.rank or 0) > 0
+    return info.rank > 0
 end
 
 -- A quest is shut out once one of the quests it excludes is done or
@@ -153,9 +156,12 @@ end
 ---@return table[]|nil parallel
 ---@return string|nil blocked  why the data's next quest was passed over
 local function NextOf(info, visited)
-    local nextID = info.next or info.breadcrumbFor or (ns.db and ns.db.links[info.id])
-    if nextID and visited[nextID] then
-        nextID = nil
+    local nextID
+    for _, candidate in ipairs({ info.next or false, info.breadcrumbFor or false }) do
+        if candidate and not visited[candidate] then
+            nextID = candidate
+            break
+        end
     end
 
     -- The data's next quest may be another race's or class's version of
@@ -171,19 +177,31 @@ local function NextOf(info, visited)
     end
 
     -- A quest that shuts out the next step is the other way of doing it,
-    -- not another quest on top.
+    -- not another quest on top. Quests already done don't make a fork:
+    -- the walk goes through one only when it's the only way on.
     local nextInfo = nextID and Info(nextID)
-    local branches = {}
+    local branches, done = {}, {}
     for _, follower in ipairs(OpenedBy(info, visited)) do
         local rival = nextInfo and (Excludes(follower, nextInfo) or Excludes(nextInfo, follower))
         if follower.id ~= nextID and not rival then
-            table.insert(branches, follower)
+            table.insert(Done(follower.id) and done or branches, follower)
+        end
+    end
+
+    -- A link Onward saw the game make counts only where the data has
+    -- nothing at all, so a wrong one can't turn a chain the data knows.
+    if not nextID and #branches == 0 and #done == 0 then
+        local link = ns.db and ns.db.links[info.id]
+        if link and not visited[link] and Usable(Info(link)) then
+            nextID = link
         end
     end
 
     -- With no explicit next quest, a single quest that needs this one is
     -- the next step. Several make a fork, unless they all lead to one.
-    if not nextID and #branches == 1 then
+    if not nextID and #branches == 0 and #done == 1 then
+        nextID = done[1].id
+    elseif not nextID and #branches == 1 then
         nextID = branches[1].id
         branches = {}
     elseif not nextID and #branches > 1 then

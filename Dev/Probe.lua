@@ -129,6 +129,21 @@ function Probe.Run(id)
     local questLevel, baseXP = ns.Source.BaseXP(id)
     Say("  base XP %s at quest level %s", Value(baseXP), Value(questLevel))
 
+    -- Whether the game says which professions the character has: the
+    -- quest's own, else Cooking (185) and Blacksmithing (164).
+    local info = ns.Source.Quest(id)
+    for _, skillID in ipairs(info and info.skill and { info.skill } or { 185, 164 }) do
+        local ok, skill = pcall(C_SkillInfo.GetSkillLineInfoByID, skillID)
+        Say(
+            "  skill %d: %s",
+            skillID,
+            ok
+                    and type(skill) == "table"
+                    and ("%s, rank %s"):format(Value(skill.name), Value(skill.rank))
+                or Value(ok and skill)
+        )
+    end
+
     local classification = C_QuestInfoSystem.GetQuestClassification(id)
     Say("  classification %s", Value(classification))
     local line = C_QuestLine.GetQuestLineInfo(id)
