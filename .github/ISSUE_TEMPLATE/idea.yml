@@ -1,0 +1,26 @@
+name: An idea or a request
+description: Something Onward could do, or could do better.
+labels: ["idea"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Onward is meant to stay small and quiet: a few lines in the quest
+        window and the quest log. Questie already draws the map, so ideas
+        for map pins or routes belong there.
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like it to do?
+      description: Say it the way you'd say it to a friend. No need to know how it would work.
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: What would that help you with?
+      description: The problem behind the idea often suggests a better answer than the first one.
+    validations:
+      required: false

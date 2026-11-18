@@ -1,0 +1,37 @@
+name: Something went wrong
+description: An error, a chain that looks wrong, or a reward that doesn't match the game.
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you saw, and what you expected to see instead.
+      placeholder: Onward said 3 more quests, but the chain ended after the next one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: quest
+    attributes:
+      label: Which quest?
+      description: Its name, and its ID if you know it (Questie shows IDs in its tooltips if you turn them on). Your faction and class help too.
+    validations:
+      required: false
+
+  - type: textarea
+    id: error
+    attributes:
+      label: An error message, if the game showed one
+      description: Turn on Lua errors with `/console scriptErrors 1`, and copy the whole message here.
+      render: text
+    validations:
+      required: false
+
+  - type: textarea
+    id: addons
+    attributes:
+      label: Other quest addons you use
+      description: Questie and its version, and any quest log or map addons. Onward reads Questie's quest data.
+    validations:
+      required: false

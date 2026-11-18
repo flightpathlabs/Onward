@@ -1,0 +1,153 @@
+local _, ns = ...
+
+-- Onward's page in the game's Options window, the /onward command and the
+-- entry in the minimap's addon menu. A change takes effect as it's made,
+-- like the game's own options.
+
+-- Each setting is registered with the game under a name of its own: this,
+-- followed by its key in the saved settings.
+local PREFIX = "Onward_"
+
+local CONFIRM = "ONWARD_CONFIRM"
+
+StaticPopupDialogs[CONFIRM] = {
+    text = "%s",
+    button1 = "Yes",
+    button2 = "Cancel",
+    OnAccept = function(_, onAccept)
+        onAccept()
+    end,
+    hideOnEscape = true,
+    timeout = 0,
+    whileDead = true,
+    showAlert = true,
+}
+
+local category, layout
+
+local function Changed()
+    ns.Send("SETTINGS_CHANGED")
+end
+
+local function AddHeader(title)
+    layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(title))
+end
+
+local function AddCheckbox(key, label, tooltip)
+    local setting = Settings.RegisterAddOnSetting(
+        category,
+        PREFIX .. key,
+        key,
+        ns.settings,
+        Settings.VarType.Boolean,
+        label,
+        ns.DEFAULT_SETTINGS[key]
+    )
+    Settings.SetOnValueChangedCallback(PREFIX .. key, Changed)
+    Settings.CreateCheckbox(category, setting, tooltip)
+end
+
+local function AddButton(label, buttonText, onClick, tooltip)
+    local initializer = CreateSettingsButtonInitializer(label, buttonText, onClick, tooltip, false)
+    initializer:AddSearchTags(label)
+    layout:AddInitializer(initializer)
+end
+
+-- What the page says about where the chains come from.
+local SOURCE_NOTES = {
+    ready = "Chains come from Questie's quest data",
+    missing = "Questie isn't installed: Onward only knows chains it has seen",
+    old = "This Questie is too old or too new for Onward: update the older one",
+}
+
+local function AddOptions()
+    AddHeader("Where it shows")
+    AddCheckbox(
+        "questFrame",
+        "In the quest window",
+        "Under the rewards when someone offers you a quest, and when you hand one in."
+    )
+    AddCheckbox(
+        "questLog",
+        "In the quest log",
+        "Under a quest's description in the quest log beside the map."
+    )
+    AddCheckbox(
+        "mapTooltip",
+        "On Questie's map icons",
+        "One line on the tooltip of a quest giver's icon on the map and minimap. Needs Questie."
+    )
+
+    AddHeader("What it shows")
+    AddCheckbox(
+        "items",
+        "Reward items",
+        "The items the rest of the chain gives, with their tooltips. A quest that lets you "
+            .. 'choose shows all of its choices after "One of".'
+    )
+    AddCheckbox(
+        "marks",
+        "Mark quests that matter",
+        "Class quests, attunements and dungeon keys, spells a quest teaches, and epic rewards, "
+            .. "for the quest itself or anywhere further along its chain."
+    )
+
+    AddHeader("Learning")
+    AddCheckbox(
+        "learn",
+        "Remember what quests give",
+        "Keeps the rewards of quests you open, and which quest follows which, so later chains "
+            .. "can count them. Kept for all your characters."
+    )
+    AddButton("Forget what Onward has learned", "Forget", function()
+        StaticPopup_Show(
+            CONFIRM,
+            "Forget every reward and link Onward has learned? This can't be undone.",
+            nil,
+            ns.ForgetLearned
+        )
+    end, "Empties what Onward has learned. Your options stay as they are. It asks first.")
+
+    AddHeader(SOURCE_NOTES[ns.Source.Status()])
+end
+
+--- Opens the game's Options window on Onward's page.
+function ns.OpenOptions()
+    -- The Options window is one of the panels the game won't open in a
+    -- fight. Say so the way the game does, not in chat.
+    if InCombatLockdown() then
+        if UIErrorsFrame and UIErrorsFrame.AddExternalErrorMessage then
+            UIErrorsFrame:AddExternalErrorMessage(ERR_NOT_IN_COMBAT)
+        end
+        return
+    end
+    if category then
+        Settings.OpenToCategory(category:GetID())
+    end
+end
+
+-- Registered at login rather than when the addon loads, so the Options
+-- window has finished setting itself up.
+ns.OnEvent("PLAYER_LOGIN", function()
+    category, layout = Settings.RegisterVerticalLayoutCategory(ns.TITLE)
+    AddOptions()
+    Settings.RegisterAddOnCategory(category)
+end)
+
+SLASH_ONWARD1 = "/onward"
+SlashCmdList.ONWARD = function(message)
+    local word, rest = strtrim(message or ""):match("^(%S*)%s*(.-)$")
+    word = (word or ""):lower()
+    if word == "probe" and ns.Probe then
+        ns.Probe.Run(tonumber(rest))
+    elseif word == "chain" and ns.Probe then
+        ns.Probe.Chain(tonumber(rest))
+    else
+        ns.OpenOptions()
+    end
+end
+
+-- Named in the TOC, so the minimap's addon menu can call it.
+function Onward_OnAddonCompartmentClick()
+    ns.OpenOptions()
+end

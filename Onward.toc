@@ -1,0 +1,28 @@
+## Interface: 16001
+## Title: Onward
+## Notes: Shows where a quest leads: how many quests follow it, and what the whole chain gives in XP, money and items. Marks class quests and attunements.
+## Version: 0.1.0
+## Author: Flight Path Labs
+## SavedVariables: OnwardDB
+## OptionalDeps: QuestieDB, Questie
+## AddonCompartmentFunc: Onward_OnAddonCompartmentClick
+## X-License: MIT
+
+# Load order matters: each group only uses what the groups above it define.
+
+Core\Init.lua
+Core\Database.lua
+
+Data\Important.lua
+
+Quests\Source.lua
+Quests\Rewards.lua
+Quests\Learn.lua
+Quests\Chain.lua
+
+UI\Text.lua
+UI\Block.lua
+UI\MapTooltip.lua
+UI\Settings.lua
+
+Dev\Probe.lua
