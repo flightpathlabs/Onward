@@ -122,6 +122,12 @@ local function CreateBlock(parent)
 
     block.buttons = {}
     block.labels = {}
+
+    block.fade = block:CreateAnimationGroup()
+    block.fade:SetToFinalAlpha(true)
+    block.fadeIn = block.fade:CreateAnimation("Alpha")
+    block.fadeIn:SetFromAlpha(0)
+    block.fadeIn:SetToAlpha(1)
     return block
 end
 
@@ -402,9 +408,12 @@ end)
 -- While a quest's text writes itself out, Blizzard keeps the objectives
 -- and rewards hidden and fades them in at the end. The block follows them,
 -- without touching Blizzard's own list of what fades.
+-- The block fades with an animation of its own rather than Blizzard's
+-- shared fade list, which addon code shouldn't add to.
 hooksecurefunc("QuestInfo_HideAlphaDependentText", function(page)
     local block = blocks[page]
     if block then
+        block.fade:Stop()
         block:SetAlpha(0)
     end
 end)
@@ -412,15 +421,21 @@ end)
 hooksecurefunc("QuestInfo_ShowAlphaDependentText", function(page)
     local block = blocks[page]
     if block then
+        block.fade:Stop()
         block:SetAlpha(1)
     end
 end)
 
 hooksecurefunc("QuestInfo_FadeInAlphaDependentText", function(page, fadeTime)
     local block = blocks[page]
-    if block and block:IsShown() then
-        UIFrameFadeIn(block, fadeTime)
-    elseif block then
+    if not block then
+        return
+    end
+    block.fade:Stop()
+    if block:IsShown() and fadeTime and fadeTime > 0 then
+        block.fadeIn:SetDuration(fadeTime)
+        block.fade:Play()
+    else
         block:SetAlpha(1)
     end
 end)

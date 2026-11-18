@@ -197,17 +197,19 @@ local function NextOf(info, visited)
         end
     end
 
-    -- With no explicit next quest, a single quest that needs this one is
-    -- the next step. Several make a fork, unless they all lead to one.
-    if not nextID and #branches == 0 and #done == 1 then
-        nextID = done[1].id
-    elseif not nextID and #branches == 1 then
-        nextID = branches[1].id
-        branches = {}
-    elseif not nextID and #branches > 1 then
-        local join, parallel = JoinOf(branches, visited)
+    -- Several opened quests that a later one needs all of are steps side
+    -- by side, whether or not some are done already; the done ones aren't
+    -- counted, but the walk goes on to the later quest.
+    if not nextID and #branches + #done >= 2 then
+        local candidates = {}
+        for _, list in ipairs({ branches, done }) do
+            for _, follower in ipairs(list) do
+                table.insert(candidates, follower)
+            end
+        end
+        local join, parallel = JoinOf(candidates, visited)
         if join then
-            local inJoin = {}
+            local inJoin = { [join.id] = true }
             for _, step in ipairs(parallel) do
                 inJoin[step.id] = true
             end
@@ -219,6 +221,15 @@ local function NextOf(info, visited)
             end
             return join.id, others, parallel
         end
+    end
+
+    -- With no explicit next quest, a single quest that needs this one is
+    -- the next step. Several make a fork.
+    if not nextID and #branches == 0 and #done == 1 then
+        nextID = done[1].id
+    elseif not nextID and #branches == 1 then
+        nextID = branches[1].id
+        branches = {}
     end
     return nextID, branches, nil, not nextID and blocked or nil
 end

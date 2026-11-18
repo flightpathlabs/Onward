@@ -28,6 +28,7 @@ local REQUEST_WINDOW = 3
 
 local requested = {} -- quest ID -> GetTime() of the last request
 local windowStart, windowCount = 0, 0
+local retryPending = false
 
 -- Rewards read from the game this session but not saved, when the player
 -- has turned learning off.
@@ -149,6 +150,15 @@ local function Request(id)
         windowStart, windowCount = now, 0
     end
     if windowCount >= REQUESTS_PER_WINDOW then
+        -- Come back once the window is over, so the quests left out are
+        -- asked about without the player having to reopen anything.
+        if not retryPending then
+            retryPending = true
+            C_Timer.After(windowStart + REQUEST_WINDOW - now + 0.1, function()
+                retryPending = false
+                ns.Send("REWARDS_CHANGED")
+            end)
+        end
         return
     end
     windowCount = windowCount + 1
