@@ -22,10 +22,15 @@ Not released yet: this is work in progress.
   quest log and quest givers' lists. Questie's "!" icons on the map get a
   small number too.
 
+- **The Onward window** (`/onward`): quests you dropped and can take
+  again, ones below your level you never did that still lead somewhere,
+  and chains worth seeking out. Click one to mark its giver on your map.
+
 **Getting started**
 
 Onward reads Questie's quest data, so have Questie installed. There's
-nothing to set up. `/onward` opens the options.
+nothing to set up. `/onward` opens the window, and its Options button
+the options.
 
 **Notes**
 

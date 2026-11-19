@@ -65,14 +65,15 @@ local selected = 1
 
 --- Opens the world map on a zone with the game's waypoint pin on a spot.
 local function ShowOnMap(mapID, x, y)
-    -- The world map is one of the panels the game won't open in a fight.
-    if InCombatLockdown() then
-        UIErrorsFrame:AddExternalErrorMessage(ERR_NOT_IN_COMBAT)
-        return
-    end
     if C_Map.CanSetUserWaypointOnMap(mapID) then
         C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(mapID, x, y))
         C_SuperTrack.SetSuperTrackedUserWaypoint(true)
+    end
+    -- The world map is one of the panels the game won't open in a fight;
+    -- the waypoint is set, and the map can be opened after.
+    if InCombatLockdown() then
+        UIErrorsFrame:AddExternalErrorMessage(ERR_NOT_IN_COMBAT)
+        return
     end
     OpenWorldMap(mapID)
 end
@@ -177,11 +178,11 @@ local function CreateRow(row)
     row.note = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     row.note:SetPoint("TOPRIGHT", -8, -6)
     row.note:SetJustifyH("RIGHT")
-    row.title:SetPoint("RIGHT", row.note, "LEFT", -8, 0)
+    row.title:SetPoint("TOPRIGHT", row.note, "TOPLEFT", -8, 0)
 
     row.totals = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     row.totals:SetPoint("TOPLEFT", row.title, "BOTTOMLEFT", 0, -4)
-    row.totals:SetPoint("RIGHT", -8, 0)
+    row.totals:SetPoint("TOPRIGHT", row.note, "BOTTOMRIGHT", 0, -4)
     row.totals:SetJustifyH("LEFT")
     row.totals:SetWordWrap(false)
 
@@ -200,7 +201,7 @@ local function CreateRow(row)
         end
         row.icons[index] = icon
     end
-    row.where:SetPoint("RIGHT", row.icons[MAX_ICONS], "LEFT", -6, 0)
+    row.where:SetPoint("TOPRIGHT", row.icons[MAX_ICONS], "TOPLEFT", -6, 0)
 
     row:SetScript("OnEnter", RowOnEnter)
     row:SetScript("OnLeave", GameTooltip_Hide)
@@ -255,9 +256,12 @@ local function FillIcons(row, summary)
 end
 
 local function FillRow(row, entry)
+    row.summary, row.giver = nil, nil
     local summary = ns.Chain.Build(entry.id)
     row.summary = summary
-    entry.giver = entry.giver or Open.Giver(entry.id) or false
+    if entry.giver == nil then
+        entry.giver = Open.Giver(entry.id) or false
+    end
     row.giver = entry.giver or nil
 
     local name = entry.name
@@ -328,7 +332,7 @@ local function Redraw()
     local lists = Open.Lists()
     local rows = lists and lists[tab.key] or {}
     scrollBox:SetDataProvider(CreateDataProvider(rows), ScrollBoxConstants.RetainScrollPosition)
-    if Open.Scanning() or not lists then
+    if not lists then
         empty:SetText("Looking through quests...")
         empty:Show()
     elseif #rows == 0 then
@@ -363,7 +367,7 @@ local function CreateWindow()
 
     intro = window:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     intro:SetPoint("TOPLEFT", 16, -32)
-    intro:SetPoint("RIGHT", -16, 0)
+    intro:SetPoint("TOPRIGHT", -16, -32)
     intro:SetJustifyH("LEFT")
 
     local inset = window.Inset
@@ -398,7 +402,7 @@ local function CreateWindow()
 
     footnote = window:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     footnote:SetPoint("BOTTOMLEFT", 14, 30)
-    footnote:SetPoint("RIGHT", -14, 0)
+    footnote:SetPoint("BOTTOMRIGHT", -14, 30)
     footnote:SetJustifyH("LEFT")
 
     local options = CreateFrame("Button", nil, window, "UIPanelButtonTemplate")

@@ -43,6 +43,17 @@ First version.
   grey for you and so is everything after it. The reason shows with it.
 - In lists, a tick for worth doing and a grey "skip".
 
+**The Onward window**
+
+- `/onward` or the minimap's addon menu opens a window of quests worth a
+  second look: ones you dropped and can take again, ones below your level
+  you never did that still lead somewhere, and chains you can start now,
+  best first.
+- Each row shows the chain's count, totals and verdict, where the giver
+  is, and the first reward items. Clicking it marks the giver on your map.
+- Abandoned quests come from Questie's journey and from Onward's own
+  record from now on. Quests dropped before either can't be known.
+
 **Marks**
 
 - Class quests, attunements (Molten Core, Onyxia's Lair, Blackwing Lair,
@@ -52,6 +63,7 @@ First version.
 
 **Other**
 
-- Options under Options > AddOns > Onward, or `/onward`.
+- Options under Options > AddOns > Onward, the window's Options button,
+  or `/onward options`.
 - `/onward probe` and `/onward chain` print what Onward sees for a quest,
   for bug reports.

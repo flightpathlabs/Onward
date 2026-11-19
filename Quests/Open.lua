@@ -71,6 +71,14 @@ local function PlayerFaction()
     return faction == "Alliance" and "A" or faction == "Horde" and "H" or nil
 end
 
+-- Whether an NPC would talk to this character, or would as far as Onward
+-- can tell.
+local function FriendlyNpc(npc)
+    local friendly = Read("Npc", "friendlyToFaction", npc)
+    local faction = PlayerFaction()
+    return type(friendly) ~= "string" or not faction or friendly:find(faction, 1, true) ~= nil
+end
+
 -- Whether the people who give the quest would talk to this character. Some
 -- quests carry no race mask and are only kept to one side by who offers
 -- them.
@@ -80,10 +88,8 @@ local function GiverFriendly(id)
     if type(npcs) ~= "table" or #npcs == 0 then
         return true
     end
-    local faction = PlayerFaction()
     for _, npc in ipairs(npcs) do
-        local friendly = Read("Npc", "friendlyToFaction", npc)
-        if friendly == nil or (faction and friendly:find(faction, 1, true)) then
+        if FriendlyNpc(npc) then
             return true
         end
     end
@@ -135,7 +141,7 @@ function Open.CanTake(id)
     if required > ns.PlayerLevel() then
         return false
     end
-    if not GiverFriendly(id) then
+    if Source.IsRepeatable(info) or not GiverFriendly(id) then
         return false
     end
 
@@ -147,7 +153,7 @@ function Open.CanTake(id)
         end
     end
 
-    if Source.IsRepeatable(info) or not Source.CanTake(info) then
+    if not Source.CanTake(info) then
         return false
     end
     return PrerequisitesDone(info) and not ShutOut(info)
@@ -168,7 +174,8 @@ function Open.Giver(id)
         local entity, list = kind[1], kind[2]
         for _, giverID in ipairs(type(list) == "table" and list or {}) do
             local spawns = Read(entity, "spawns", giverID)
-            if type(spawns) == "table" then
+            local friendly = entity ~= "Npc" or FriendlyNpc(giverID)
+            if friendly and type(spawns) == "table" and next(spawns) then
                 local areaID = entity == "Npc" and Read("Npc", "zoneID", giverID) or nil
                 if not (areaID and spawns[areaID]) then
                     areaID = next(spawns)
@@ -201,14 +208,25 @@ end
 
 local turnedIn = {}
 
+local function Forgive(questID)
+    local me = ns.Me()
+    if me then
+        me.abandoned[questID] = nil
+    end
+end
+
 ns.OnEvent("QUEST_TURNED_IN", function(questID)
-    turnedIn[questID] = true
+    turnedIn[questID] = GetTime()
+    Forgive(questID)
 end)
+
+ns.OnEvent("QUEST_ACCEPTED", Forgive)
 
 ns.OnEvent("QUEST_REMOVED", function(questID)
     C_Timer.After(ABANDON_WAIT, function()
-        if turnedIn[questID] or Done(questID) or C_QuestLog.IsOnQuest(questID) then
-            turnedIn[questID] = nil
+        local handedIn = turnedIn[questID] and GetTime() - turnedIn[questID] < ABANDON_WAIT * 4
+        turnedIn[questID] = nil
+        if handedIn or Done(questID) or C_QuestLog.IsOnQuest(questID) then
             return
         end
         local me = ns.Me()
@@ -220,7 +238,8 @@ ns.OnEvent("QUEST_REMOVED", function(questID)
 end)
 
 -- Questie's journey: every quest event for this character, abandons
--- included, since Questie was installed.
+-- included, since Questie was installed. Only an abandon with nothing
+-- after it counts: a quest taken again or handed in since isn't dropped.
 local function QuestieAbandons()
     local questie = _G.Questie
     local char = type(questie) == "table" and type(questie.db) == "table" and questie.db.char
@@ -230,13 +249,12 @@ local function QuestieAbandons()
         return found
     end
     for _, entry in ipairs(journey) do
-        if
-            type(entry) == "table"
-            and entry.Event == "Quest"
-            and entry.SubType == "Abandon"
-            and type(entry.Quest) == "number"
-        then
-            found[entry.Quest] = math.max(found[entry.Quest] or 0, entry.Timestamp or 0)
+        if type(entry) == "table" and entry.Event == "Quest" and type(entry.Quest) == "number" then
+            if entry.SubType == "Abandon" then
+                found[entry.Quest] = entry.Timestamp or 0
+            elseif entry.SubType == "Accept" or entry.SubType == "Complete" then
+                found[entry.Quest] = nil
+            end
         end
     end
     return found
@@ -452,6 +470,9 @@ function Open.Refresh()
         lists = found
         scanning = false
         ns.Send("QUESTS_CHANGED")
+        if dirty then
+            ns.Send("QUESTS_DIRTY")
+        end
     end
     Step()
 end
@@ -461,6 +482,18 @@ Open.MarkDirty = MarkDirty
 ns.OnEvent("QUEST_TURNED_IN", MarkDirty)
 ns.OnEvent("QUEST_ACCEPTED", MarkDirty)
 ns.OnEvent("QUEST_REMOVED", MarkDirty)
-ns.OnEvent("PLAYER_LEVEL_UP", MarkDirty)
-ns.OnEvent("SKILL_LINES_CHANGED", MarkDirty)
+-- UnitLevel still gives the old level while PLAYER_LEVEL_UP is handed out.
+ns.OnEvent("PLAYER_LEVEL_UP", function()
+    C_Timer.After(1, MarkDirty)
+end)
+-- Skill lines change with every weapon skill-up in a fight; only learning
+-- or dropping a profession matters here, and that changes the line count.
+local skillLines
+ns.OnEvent("SKILL_LINES_CHANGED", function()
+    local count = C_SkillInfo and C_SkillInfo.GetNumSkillLines and C_SkillInfo.GetNumSkillLines()
+    if count ~= skillLines then
+        skillLines = count
+        MarkDirty()
+    end
+end)
 ns.Listen("CHAINS_CHANGED", MarkDirty)
