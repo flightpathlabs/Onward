@@ -162,12 +162,19 @@ SlashCmdList.ONWARD = function(message)
         ns.Probe.Run(tonumber(rest))
     elseif word == "chain" and ns.Probe then
         ns.Probe.Chain(tonumber(rest))
-    else
+    elseif word == "options" or word == "config" then
         ns.OpenOptions()
+    else
+        ns.Window.Toggle()
     end
 end
 
--- Named in the TOC, so the minimap's addon menu can call it.
-function Onward_OnAddonCompartmentClick()
-    ns.OpenOptions()
+-- Named in the TOC, so the minimap's addon menu can call it. Left-click
+-- opens the window, right-click the options.
+function Onward_OnAddonCompartmentClick(_, mouseButton)
+    if mouseButton == "RightButton" then
+        ns.OpenOptions()
+    else
+        ns.Window.Toggle()
+    end
 end

@@ -346,7 +346,18 @@ local function Marks(summary, root, rootRewards)
 end
 
 local function AddStep(summary, info, needs, isBranch)
-    local rewards = summary.light and NO_REWARDS or Rewards.Get(info.id)
+    local rewards
+    if summary.light then
+        rewards = {
+            known = false,
+            items = NO_REWARDS.items,
+            choices = NO_REWARDS.choices,
+            spells = NO_REWARDS.spells,
+            xp = Rewards.XP(info.id),
+        }
+    else
+        rewards = Rewards.Get(info.id)
+    end
     local step = {
         info = info,
         id = info.id,
@@ -385,6 +396,8 @@ local function IsGrey(level)
     end
     return GetQuestDifficultyColor(level) == QuestDifficultyColors.trivial
 end
+
+Chain.IsGrey = IsGrey
 
 -- QuestieDB marks some quests' levels as 0 or -1 (events, scaled quests).
 local function KnownLevel(level)
@@ -494,8 +507,8 @@ end
 ---                      other characters but not this one
 --- summary.verdict      "worth", "skip" or nil, with summary.reason
 ---
---- With light set, only the steps are worked out: no rewards, marks or
---- verdict, and nothing is asked of the server.
+--- With light set, only the steps and their XP are worked out: no other
+--- rewards, marks or verdict, and nothing is asked of the server.
 ---@param rootID number
 ---@param light boolean|nil
 ---@return table|nil

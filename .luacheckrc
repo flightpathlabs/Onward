@@ -25,6 +25,7 @@ ignore = {
 globals = {
     "SlashCmdList",
     "StaticPopupDialogs",
+    "UISpecialFrames",
 
     -- Ours
     "OnwardDB",
@@ -52,13 +53,18 @@ read_globals = {
 
     -- Blizzard's shared Lua helpers
     "BreakUpLargeNumbers",
+    "ButtonFrameTemplate_HidePortrait",
     "CreateColor",
+    "CreateDataProvider",
+    "CreateScrollBoxListLinearView",
     "CreateSettingsButtonInitializer",
     "CreateSettingsListSectionHeaderInitializer",
     "CreateTextureMarkup",
     "GameTooltip_AddBlankLineToTooltip",
     "GameTooltip_AddColoredDoubleLine",
     "GameTooltip_AddColoredLine",
+    "GameTooltip_AddDisabledLine",
+    "GameTooltip_AddInstructionLine",
     "GameTooltip_AddNormalLine",
     "GameTooltip_Hide",
     "GameTooltip_SetTitle",
@@ -69,7 +75,13 @@ read_globals = {
     "GossipSharedActiveQuestButtonMixin",
     "GossipSharedAvailableQuestButtonMixin",
     "QuestInfo_ShowSpacer",
+    "OpenWorldMap",
+    "PanelTemplates_SetNumTabs",
+    "PanelTemplates_SetTab",
+    "ScrollBoxConstants",
+    "ScrollUtil",
     "Settings",
+    "UiMapPoint",
     "StaticPopup_Show",
     "hooksecurefunc",
 
@@ -89,6 +101,7 @@ read_globals = {
     "QuestInfoDescriptionText",
     "QuestInfoSpacerFrame",
     "UIErrorsFrame",
+    "UIParent",
 
     -- Namespaced API
     "C_CurrencyInfo",
@@ -99,6 +112,7 @@ read_globals = {
     "C_QuestLog",
     "C_SkillInfo",
     "C_Spell",
+    "C_SuperTrack",
     "C_TaskQuest",
     "C_Timer",
 
@@ -126,6 +140,9 @@ read_globals = {
     "HaveQuestRewardData",
     "InCombatLockdown",
     "UnitClass",
+    "UnitFactionGroup",
+    "UnitName",
+    "GetRealmName",
     "UnitGUID",
     "UnitLevel",
     "UnitXPMax",

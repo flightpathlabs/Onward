@@ -198,6 +198,14 @@ local function XPFor(id, record)
     return nil
 end
 
+--- The quest's XP for the character now, from what Onward already has,
+--- without asking the server anything.
+---@param id number
+---@return number|nil
+function Rewards.XP(id)
+    return XPFor(id, Saved(id))
+end
+
 --- Everything Onward knows about what a quest gives.
 ---
 --- known is false when the item and money rewards aren't known yet, and

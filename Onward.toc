@@ -19,12 +19,14 @@ Quests\Source.lua
 Quests\Rewards.lua
 Quests\Learn.lua
 Quests\Chain.lua
+Quests\Open.lua
 
 UI\Text.lua
 UI\Block.lua
 UI\MapTooltip.lua
 UI\Lists.lua
 UI\MapNumbers.lua
+UI\Window.lua
 UI\Settings.lua
 
 Dev\Probe.lua

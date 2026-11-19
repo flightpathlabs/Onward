@@ -9,6 +9,8 @@ local addonName, ns = ...
 --             handed in, for chains the data doesn't know about
 --   paid      quest ID -> the money a hand-in paid at the level cap, where
 --             the quest's XP is paid as money too
+--   characters  "Name - Realm" -> { abandoned = { quest ID -> time } }, the
+--             one thing kept per character: which quests they dropped
 
 -- Bumped when the shape of the saved data changes, so an older table can
 -- be brought up to date in Upgrade below instead of being thrown away.
@@ -42,6 +44,7 @@ ns.OnEvent("ADDON_LOADED", function(name)
     db.quests = type(db.quests) == "table" and db.quests or {}
     db.links = type(db.links) == "table" and db.links or {}
     db.paid = type(db.paid) == "table" and db.paid or {}
+    db.characters = type(db.characters) == "table" and db.characters or {}
 
     if (db.version or 0) < VERSION then
         Upgrade(db)
@@ -52,7 +55,24 @@ ns.OnEvent("ADDON_LOADED", function(name)
     ns.Send("DATABASE_READY")
 end)
 
---- Forgets every reward and link Onward has learned. Settings stay.
+--- This character's own record, made the first time it's asked for.
+---@return table|nil
+function ns.Me()
+    if not ns.db then
+        return nil
+    end
+    local key = ("%s - %s"):format(UnitName("player") or "?", GetRealmName() or "")
+    local me = ns.db.characters[key]
+    if type(me) ~= "table" then
+        me = {}
+        ns.db.characters[key] = me
+    end
+    me.abandoned = type(me.abandoned) == "table" and me.abandoned or {}
+    return me
+end
+
+--- Forgets every reward and link Onward has learned. Settings stay, and so
+--- does each character's record of what they abandoned.
 function ns.ForgetLearned()
     if not ns.db then
         return
