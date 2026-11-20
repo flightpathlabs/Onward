@@ -1,5 +1,7 @@
 # Worth It
 
+![Worth It](docs/images/worth-it-logo.png)
+
 See where a quest leads in World of Warcraft: Forever, and whether it's
 worth doing. Under a quest's rewards: how many quests follow it, and what
 the rest of the chain gives.
