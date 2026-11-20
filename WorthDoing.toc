@@ -1,6 +1,6 @@
 ## Interface: 16001
 ## Title: Worth Doing
-## Notes: Shows where a quest leads: how many quests follow it, and what the whole chain gives in XP, money and items. Marks class quests and attunements.
+## Notes: See where a quest leads and whether it's worth doing: the rest of its chain, what it gives in XP, money and items, and quests you've missed or dropped.
 ## Version: 0.1.0
 ## Author: Flight Path Labs
 ## SavedVariables: WorthDoingDB
