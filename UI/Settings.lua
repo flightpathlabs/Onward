@@ -1,14 +1,14 @@
 local _, ns = ...
 
--- Onward's page in the game's Options window, the /onward command and the
+-- Worth Doing's page in the game's Options window, the /worthdoing command and the
 -- entry in the minimap's addon menu. A change takes effect as it's made,
 -- like the game's own options.
 
 -- Each setting is registered with the game under a name of its own: this,
 -- followed by its key in the saved settings.
-local PREFIX = "Onward_"
+local PREFIX = "WorthDoing_"
 
-local CONFIRM = "ONWARD_CONFIRM"
+local CONFIRM = "WORTHDOING_CONFIRM"
 
 StaticPopupDialogs[CONFIRM] = {
     text = "%s",
@@ -56,8 +56,8 @@ end
 -- What the page says about where the chains come from.
 local SOURCE_NOTES = {
     ready = "Chains come from Questie's quest data",
-    missing = "Questie isn't installed: Onward only knows chains it has seen",
-    old = "This Questie is too old or too new for Onward: update the older one",
+    missing = "Questie isn't installed: Worth Doing only knows chains it has seen",
+    old = "This Questie is too old or too new for Worth Doing: update the older one",
 }
 
 local function AddOptions()
@@ -94,7 +94,7 @@ local function AddOptions()
     AddCheckbox(
         "minimapButton",
         "Minimap button",
-        "A button with a quest mark on the edge of the minimap: left-click opens the Onward "
+        "A button with a quest mark on the edge of the minimap: left-click opens the Worth Doing "
             .. "window, right-click these options. Drag it to move it round the edge."
     )
 
@@ -126,19 +126,19 @@ local function AddOptions()
         "Keeps the rewards of quests you open, and which quest follows which, so later chains "
             .. "can count them. Kept for all your characters."
     )
-    AddButton("Forget what Onward has learned", "Forget", function()
+    AddButton("Forget what Worth Doing has learned", "Forget", function()
         StaticPopup_Show(
             CONFIRM,
-            "Forget every reward and link Onward has learned? This can't be undone.",
+            "Forget every reward and link Worth Doing has learned? This can't be undone.",
             nil,
             ns.ForgetLearned
         )
-    end, "Empties what Onward has learned. Your options stay as they are. It asks first.")
+    end, "Empties what Worth Doing has learned. Your options stay as they are. It asks first.")
 
     AddHeader(SOURCE_NOTES[ns.Source.Status()])
 end
 
---- Opens the game's Options window on Onward's page.
+--- Opens the game's Options window on Worth Doing's page.
 function ns.OpenOptions()
     -- The Options window is one of the panels the game won't open in a
     -- fight. Say so the way the game does, not in chat.
@@ -161,8 +161,9 @@ ns.OnEvent("PLAYER_LOGIN", function()
     Settings.RegisterAddOnCategory(category)
 end)
 
-SLASH_ONWARD1 = "/onward"
-SlashCmdList.ONWARD = function(message)
+SLASH_WORTHDOING1 = "/worthdoing"
+SLASH_WORTHDOING2 = "/wd"
+SlashCmdList.WORTHDOING = function(message)
     local word, rest = strtrim(message or ""):match("^(%S*)%s*(.-)$")
     word = (word or ""):lower()
     if word == "probe" and ns.Probe then
@@ -178,7 +179,7 @@ end
 
 -- Named in the TOC, so the minimap's addon menu can call it. Left-click
 -- opens the window, right-click the options.
-function Onward_OnAddonCompartmentClick(_, mouseButton)
+function WorthDoing_OnAddonCompartmentClick(_, mouseButton)
     if mouseButton == "RightButton" then
         ns.OpenOptions()
     else

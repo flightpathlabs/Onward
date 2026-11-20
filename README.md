@@ -1,4 +1,4 @@
-# Onward
+# Worth Doing
 
 Shows where a quest leads, for World of Warcraft: Forever. Under a
 quest's rewards you see how many quests follow it and what the rest of
@@ -22,29 +22,29 @@ Not released yet: this is work in progress.
   quest log and quest givers' lists. Questie's "!" icons on the map get a
   small number too.
 
-- **The Onward window** (`/onward`): quests you dropped and can take
+- **The Worth Doing window** (`/worthdoing`): quests you dropped and can take
   again, ones below your level you never did that still lead somewhere,
   and chains worth seeking out. Click one to mark its giver on your map.
 
 **Getting started**
 
-Onward reads Questie's quest data, so have Questie installed. There's
-nothing to set up. `/onward` or the minimap button opens the window, and
+Worth Doing reads Questie's quest data, so have Questie installed. There's
+nothing to set up. `/worthdoing` or the minimap button opens the window, and
 its Options button the options.
 
 **Notes**
 
 - XP is for your level now, before any bonus. At the level cap XP is paid
-  as money, and Onward counts it once it has seen a hand-in.
+  as money, and Worth Doing counts it once it has seen a hand-in.
 - Rewards come from the game. Some only show once you've opened the quest
-  or it's in your log; Onward remembers what it sees.
-- Without Questie, Onward only knows the chains it has seen for itself.
+  or it's in your log; Worth Doing remembers what it sees.
+- Without Questie, Worth Doing only knows the chains it has seen for itself.
 - Found a bug? Open an issue on
-  [GitHub](https://github.com/flightpathlabs/Onward/issues).
+  [GitHub](https://github.com/flightpathlabs/WorthDoing/issues).
 
-Onward is a fan-made addon, not affiliated with Blizzard Entertainment.
+Worth Doing is a fan-made addon, not affiliated with Blizzard Entertainment.
 Chains come from Questie's quest database, read while the game runs;
-Onward doesn't copy any of it. Thanks to the Questie team.
+Worth Doing doesn't copy any of it. Thanks to the Questie team.
 
 MIT licence, see [LICENSE](LICENSE). Changes are in the
 [changelog](CHANGELOG.md). AI tooling is used openly in making this

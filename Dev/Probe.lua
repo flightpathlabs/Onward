@@ -2,14 +2,14 @@ local _, ns = ...
 
 -- Two commands for testing, which print to chat:
 --
---   /onward probe [questID]  what the game and QuestieDB say about a quest,
+--   /worthdoing probe [questID]  what the game and QuestieDB say about a quest,
 --                            then the same reads again once the game has
 --                            been asked to load it
---   /onward chain [questID]  the chain Onward builds for a quest
+--   /worthdoing chain [questID]  the chain Worth Doing builds for a quest
 --
 -- Without an ID they use the quest in the open quest window, else the one
 -- selected in the quest log. Kept in the addon so a player reporting a
--- wrong chain can paste what Onward saw.
+-- wrong chain can paste what Worth Doing saw.
 
 local Probe = {}
 ns.Probe = Probe
@@ -18,7 +18,7 @@ ns.Probe = Probe
 local WAIT = 5
 
 local function Say(text, ...)
-    print(("|cffffd100Onward|r %s"):format(text:format(...)))
+    print(("|cffffd100Worth Doing|r %s"):format(text:format(...)))
 end
 
 local function Value(value)
@@ -186,7 +186,7 @@ function Probe.Chain(id)
     end
     local summary = ns.Chain.Build(id)
     if not summary then
-        Say("quest %d leads nowhere Onward knows of.", id)
+        Say("quest %d leads nowhere Worth Doing knows of.", id)
         return
     end
     Say("quest %d: %s", id, ns.Text.Totals(summary) or "no further quests")

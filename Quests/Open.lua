@@ -1,7 +1,7 @@
 local _, ns = ...
 
 -- Which quests the character could pick up right now, where to find their
--- givers, and the three lists the Onward window shows:
+-- givers, and the three lists the Worth Doing window shows:
 --
 --   dropped  quests the character abandoned and could take again
 --   missed   quests below their level they never did, whose chains still
@@ -11,10 +11,10 @@ local _, ns = ...
 -- "Could pick up" is Questie's own judgement when Questie is loaded
 -- (QuestieDB.IsDoable: finished, hidden, race, class, prerequisites,
 -- professions, exclusive quests, breadcrumbs), plus the level check Questie
--- makes separately. Without Questie, Onward checks what it can itself.
+-- makes separately. Without Questie, Worth Doing checks what it can itself.
 --
 -- Abandoned quests come from Questie's journey, which Questie keeps for
--- each character, and from Onward's own record from now on. Quests dropped
+-- each character, and from Worth Doing's own record from now on. Quests dropped
 -- before either was installed can't be known; the window says so.
 
 local Open = {}
@@ -71,7 +71,7 @@ local function PlayerFaction()
     return faction == "Alliance" and "A" or faction == "Horde" and "H" or nil
 end
 
--- Whether an NPC would talk to this character, or would as far as Onward
+-- Whether an NPC would talk to this character, or would as far as Worth Doing
 -- can tell.
 local function FriendlyNpc(npc)
     local friendly = Read("Npc", "friendlyToFaction", npc)
@@ -160,7 +160,7 @@ function Open.CanTake(id)
 end
 
 --- Where the quest's giver is: their name, the zone's name, and a map and
---- spot for a waypoint when Onward can work them out.
+--- spot for a waypoint when Worth Doing can work them out.
 ---@param id number
 ---@return table|nil  { name, zone, mapID, x, y }  x and y from 0 to 1
 function Open.Giver(id)

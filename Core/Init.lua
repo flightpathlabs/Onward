@@ -1,6 +1,6 @@
 local addonName, ns = ...
 
--- Onward
+-- Worth Doing
 --
 -- Says where a quest leads: how many quests follow it, and what finishing
 -- the whole chain gives. The chain itself comes from QuestieDB when it's
@@ -12,7 +12,7 @@ local addonName, ns = ...
 -- and the function the minimap's addon menu calls.
 
 ns.name = addonName
-ns.TITLE = "Onward"
+ns.TITLE = "Worth Doing"
 
 ns.DEFAULT_SETTINGS = {
     -- Where the chain shows.
@@ -35,7 +35,7 @@ ns.DEFAULT_SETTINGS = {
 
     -- The button on the minimap's rim, and where on the rim it sits, in
     -- degrees anticlockwise from the right. Goldwise's sits at 215 and
-    -- Creel's at 240, so Onward's starts a little the other way.
+    -- Creel's at 240, so Worth Doing's starts a little the other way.
     minimapButton = true,
     minimapAngle = 190,
 }
@@ -69,7 +69,7 @@ frame:SetScript("OnEvent", function(_, event, ...)
     Dispatch(handlers[event], ...)
 end)
 
--- Messages between Onward's own files, so the quest window can redraw when
+-- Messages between Worth Doing's own files, so the quest window can redraw when
 -- the reward code hears back from the server without either knowing about
 -- the other.
 local listeners = {}

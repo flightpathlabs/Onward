@@ -35,8 +35,8 @@ ns.OnEvent("ADDON_LOADED", function(name)
         return
     end
 
-    OnwardDB = type(OnwardDB) == "table" and OnwardDB or {}
-    local db = OnwardDB
+    WorthDoingDB = type(WorthDoingDB) == "table" and WorthDoingDB or {}
+    local db = WorthDoingDB
 
     db.settings = type(db.settings) == "table" and db.settings or {}
     Fill(db.settings, ns.DEFAULT_SETTINGS)
@@ -71,7 +71,7 @@ function ns.Me()
     return me
 end
 
---- Forgets every reward and link Onward has learned. Settings stay, and so
+--- Forgets every reward and link Worth Doing has learned. Settings stay, and so
 --- does each character's record of what they abandoned.
 function ns.ForgetLearned()
     if not ns.db then

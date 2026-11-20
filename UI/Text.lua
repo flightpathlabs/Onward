@@ -1,6 +1,6 @@
 local _, ns = ...
 
--- The words and figures Onward shows, shared by the quest window, the
+-- The words and figures Worth Doing shows, shared by the quest window, the
 -- quest log and the map tooltips so they always say the same thing.
 
 local Text = {}
@@ -193,7 +193,7 @@ function Text.FillSteps(tooltip, summary)
     if ns.AtMaxLevel() then
         table.insert(
             notes,
-            "At the level cap XP is paid as money. Onward adds it in once it has seen a hand-in."
+            "At the level cap XP is paid as money. It's added in once a hand-in has shown how much."
         )
     elseif summary.xp > 0 then
         table.insert(notes, "XP is for your level now, before any bonus.")

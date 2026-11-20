@@ -5,12 +5,12 @@ local _, ns = ...
 --   Leads on: 4 more quests  ·  6,150 XP  ·  3g 20s  ·  Class quest
 --
 -- Questie's own tooltip already lists the next quests one by one when Shift
--- is held, each with its XP and money, so Onward adds only what that list
+-- is held, each with its XP and money, so Worth Doing adds only what that list
 -- doesn't say: the total, the items and the marks.
 --
 -- Questie has no public hook for its map tooltips. It fills GameTooltip,
 -- leaves the quests it listed on the tooltip (npcAndObjectOrder) with the
--- icon it belongs to (_owner), sets ShownAsMapIcon and calls Show. Onward
+-- icon it belongs to (_owner), sets ShownAsMapIcon and calls Show. Worth Doing
 -- reads those after Show; if a Questie update changes them, the line just
 -- doesn't appear.
 
@@ -24,7 +24,7 @@ local MAX_LINES = 4
 local REUSE_FOR = 2
 
 local adding = false
--- Whether Onward's lines are on the tooltip now. Cleared whenever the
+-- Whether Worth Doing's lines are on the tooltip now. Cleared whenever the
 -- tooltip is, so a later Show without a redraw doesn't add them twice.
 local added = false
 local built = {} -- quest ID -> { summary, at }

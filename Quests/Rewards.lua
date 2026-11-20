@@ -4,7 +4,7 @@ local _, ns = ...
 -- items you choose one of, and any spell it teaches.
 --
 -- In order of trust:
---   1. what Onward saw in the quest window or quest log (Quests/Learn.lua)
+--   1. what Worth Doing saw in the quest window or quest log (Quests/Learn.lua)
 --   2. what the game says when asked about the quest by ID; for a quest in
 --      your log that's always right, for one you haven't taken it depends
 --      on whether the game has it cached, so the answer is checked first
@@ -198,7 +198,7 @@ local function XPFor(id, record)
     return nil
 end
 
---- The quest's XP for the character now, from what Onward already has,
+--- The quest's XP for the character now, from what Worth Doing already has,
 --- without asking the server anything.
 ---@param id number
 ---@return number|nil
@@ -206,11 +206,11 @@ function Rewards.XP(id)
     return XPFor(id, Saved(id))
 end
 
---- Everything Onward knows about what a quest gives.
+--- Everything Worth Doing knows about what a quest gives.
 ---
 --- known is false when the item and money rewards aren't known yet, and
 --- money then is nil. At the level cap, money is what a hand-in paid if
---- Onward has seen one, which includes what the XP turned into
+--- Worth Doing has seen one, which includes what the XP turned into
 --- (paidAtMax is then true).
 ---@param id number
 ---@return table

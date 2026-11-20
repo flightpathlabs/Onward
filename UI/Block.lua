@@ -10,7 +10,7 @@ local _, ns = ...
 --
 -- Blizzard draws the quest page as a column of pieces, each anchored below
 -- the last, with a spacer at the bottom that sets how far the page
--- scrolls. Onward's block goes in just above that spacer, and the spacer
+-- scrolls. Worth Doing's block goes in just above that spacer, and the spacer
 -- moves down below it, so the page still scrolls to the end. The next
 -- time Blizzard draws the page it puts the spacer back itself.
 
@@ -381,7 +381,7 @@ local function Place(template, page)
         questID = GetQuestID()
         -- The quest window's rewards, read before the chain is built so
         -- the marks can use them. The event that opened the window may not
-        -- have reached Onward yet.
+        -- have reached Worth Doing yet.
         ns.Learn.FromDialog()
     end
 

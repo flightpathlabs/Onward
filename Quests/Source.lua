@@ -1,16 +1,16 @@
 local _, ns = ...
 
 -- Where the chains come from: QuestieDB, read through its public API while
--- the game runs. Nothing from it is copied into Onward.
+-- the game runs. Nothing from it is copied into Worth Doing.
 --
--- QuestieDB ships with Questie. Without it Onward still knows the links it
+-- QuestieDB ships with Questie. Without it Worth Doing still knows the links it
 -- has seen for itself (see Quests/Learn.lua), but little else, and the
 -- settings page says so.
 
 local Source = {}
 ns.Source = Source
 
--- The QuestieDB contract Onward was written against. RequireContract
+-- The QuestieDB contract Worth Doing was written against. RequireContract
 -- accepts any release that still supports it.
 local CONTRACT = 4
 
@@ -39,7 +39,7 @@ local function Library()
 end
 
 --- "ready", "missing" (no QuestieDB) or "old" (a QuestieDB that doesn't
---- support the contract Onward needs).
+--- support the contract Worth Doing needs).
 ---@return string
 function Source.Status()
     if Library() then
@@ -80,7 +80,7 @@ local function List(value)
     return nil
 end
 
---- What Onward needs to know about a quest, or nil for one QuestieDB
+--- What Worth Doing needs to know about a quest, or nil for one QuestieDB
 --- doesn't have.
 ---@param id number
 ---@return table|nil

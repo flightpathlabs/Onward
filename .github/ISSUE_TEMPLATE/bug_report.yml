@@ -7,7 +7,7 @@ body:
     attributes:
       label: What happened?
       description: What you saw, and what you expected to see instead.
-      placeholder: Onward said 3 more quests, but the chain ended after the next one.
+      placeholder: Worth Doing said 3 more quests, but the chain ended after the next one.
     validations:
       required: true
 
@@ -32,6 +32,6 @@ body:
     id: addons
     attributes:
       label: Other quest addons you use
-      description: Questie and its version, and any quest log or map addons. Onward reads Questie's quest data.
+      description: Questie and its version, and any quest log or map addons. Worth Doing reads Questie's quest data.
     validations:
       required: false

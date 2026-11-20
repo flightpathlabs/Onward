@@ -25,7 +25,7 @@ First version.
   them, they count as one chain. Otherwise the others are listed as
   "Also opens".
 - XP is figured for your level, from XP measured on Forever.
-- Onward remembers the rewards of quests you open, what a hand-in paid at
+- Worth Doing remembers the rewards of quests you open, what a hand-in paid at
   the level cap, and which quest the game offered straight after another,
   so chains get more complete as you play.
 
@@ -43,15 +43,15 @@ First version.
   grey for you and so is everything after it. The reason shows with it.
 - In lists, a tick for worth doing and a grey "skip".
 
-**The Onward window**
+**The Worth Doing window**
 
-- `/onward` or the minimap's addon menu opens a window of quests worth a
+- `/worthdoing` or the minimap's addon menu opens a window of quests worth a
   second look: ones you dropped and can take again, ones below your level
   you never did that still lead somewhere, and chains you can start now,
   best first.
 - Each row shows the chain's count, totals and verdict, where the giver
   is, and the first reward items. Clicking it marks the giver on your map.
-- Abandoned quests come from Questie's journey and from Onward's own
+- Abandoned quests come from Questie's journey and from Worth Doing's own
   record from now on. Quests dropped before either can't be known.
 
 **Marks**
@@ -67,7 +67,7 @@ First version.
   window, right-click the options. Drag it round the edge, or hide it in
   the options.
 
-- Options under Options > AddOns > Onward, the window's Options button,
-  or `/onward options`.
-- `/onward probe` and `/onward chain` print what Onward sees for a quest,
+- Options under Options > AddOns > Worth Doing, the window's Options button,
+  or `/worthdoing options`.
+- `/worthdoing probe` and `/worthdoing chain` print what Worth Doing sees for a quest,
   for bug reports.
