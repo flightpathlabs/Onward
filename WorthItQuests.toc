@@ -8,6 +8,7 @@
 ## OptionalDeps: QuestieDB, Questie
 ## AddonCompartmentFunc: WorthItQuests_OnAddonCompartmentClick
 ## X-License: MIT
+## X-Curse-Project-ID: 1819907
 
 # Load order matters: each group only uses what the groups above it define.
 
