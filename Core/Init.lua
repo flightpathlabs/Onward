@@ -32,6 +32,12 @@ ns.DEFAULT_SETTINGS = {
     verdict = true,
     -- Remember the rewards of quests you open, so later chains know them.
     learn = true,
+
+    -- The button on the minimap's rim, and where on the rim it sits, in
+    -- degrees anticlockwise from the right. Goldwise's sits at 215 and
+    -- Creel's at 240, so Onward's starts a little the other way.
+    minimapButton = true,
+    minimapAngle = 190,
 }
 
 local frame = CreateFrame("Frame")

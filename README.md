@@ -29,8 +29,8 @@ Not released yet: this is work in progress.
 **Getting started**
 
 Onward reads Questie's quest data, so have Questie installed. There's
-nothing to set up. `/onward` opens the window, and its Options button
-the options.
+nothing to set up. `/onward` or the minimap button opens the window, and
+its Options button the options.
 
 **Notes**
 

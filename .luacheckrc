@@ -64,6 +64,7 @@ read_globals = {
     "GameTooltip_AddColoredDoubleLine",
     "GameTooltip_AddColoredLine",
     "GameTooltip_AddDisabledLine",
+    "GameTooltip_AddHighlightLine",
     "GameTooltip_AddInstructionLine",
     "GameTooltip_AddNormalLine",
     "GameTooltip_Hide",
@@ -118,6 +119,8 @@ read_globals = {
 
     -- Loose API functions
     "GetBuildInfo",
+    "GetCursorPosition",
+    "GetMinimapShape",
     "GetMaxPlayerLevel",
     "GetNumQuestChoices",
     "GetNumQuestLogChoices",

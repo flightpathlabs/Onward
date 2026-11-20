@@ -27,6 +27,7 @@ UI\MapTooltip.lua
 UI\Lists.lua
 UI\MapNumbers.lua
 UI\Window.lua
+UI\MinimapButton.lua
 UI\Settings.lua
 
 Dev\Probe.lua

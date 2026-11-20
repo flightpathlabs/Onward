@@ -91,6 +91,13 @@ local function AddOptions()
             .. "the one on offer there. Needs Questie."
     )
 
+    AddCheckbox(
+        "minimapButton",
+        "Minimap button",
+        "A button with a quest mark on the edge of the minimap: left-click opens the Onward "
+            .. "window, right-click these options. Drag it to move it round the edge."
+    )
+
     AddHeader("What it shows")
     AddCheckbox(
         "items",

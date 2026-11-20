@@ -63,6 +63,10 @@ First version.
 
 **Other**
 
+- A minimap button with the game's quest "!": left-click opens the
+  window, right-click the options. Drag it round the edge, or hide it in
+  the options.
+
 - Options under Options > AddOns > Onward, the window's Options button,
   or `/onward options`.
 - `/onward probe` and `/onward chain` print what Onward sees for a quest,
