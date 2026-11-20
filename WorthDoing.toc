@@ -4,6 +4,7 @@
 ## Version: 0.1.0
 ## Author: Flight Path Labs
 ## SavedVariables: WorthDoingDB
+## IconTexture: Interface\AddOns\WorthDoing\Media\icon
 ## OptionalDeps: QuestieDB, Questie
 ## AddonCompartmentFunc: WorthDoing_OnAddonCompartmentClick
 ## X-License: MIT
