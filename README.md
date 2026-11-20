@@ -25,7 +25,7 @@ Not released yet: this is work in progress.
   again, ones below your level you never did that still lead somewhere,
   and chains worth seeking out. Click one to mark its giver on your map.
 
-![Quests worth a second look](docs/images/window.png)
+![Notes in the quest log](docs/images/quest-log.png)
 
 **Getting started**
 
