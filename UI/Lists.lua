@@ -10,7 +10,7 @@ local _, ns = ...
 -- doing, and a grey "skip" that it's safe to skip; the quest window and
 -- the chain's tooltip say why.
 --
--- The note is a text of Worth Doing's own laid after the title, in the title's
+-- The note is a text of Worth It's own laid after the title, in the title's
 -- font and colour. Blizzard's own text and layout aren't touched.
 
 local Lists = {}

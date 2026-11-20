@@ -1,4 +1,4 @@
-# Worth Doing
+# Worth It
 
 See where a quest leads in World of Warcraft: Forever, and whether it's
 worth doing. Under a quest's rewards: how many quests follow it, and what
@@ -29,8 +29,8 @@ Not released yet: this is work in progress.
 
 **Getting started**
 
-Worth Doing needs Questie: it reads Questie's quest data for the chains.
-There's nothing to set up. `/worthdoing` (or `/wd`) or the minimap button
+Worth It needs Questie: it reads Questie's quest data for the chains.
+There's nothing to set up. `/worth` or the minimap button
 opens the window, and its Options button the options.
 
 **Notes**
@@ -38,13 +38,13 @@ opens the window, and its Options button the options.
 - XP is for your level now, before any bonus. At the level cap XP is paid
   as money, which is counted once you've handed in a quest there.
 - Rewards come from the game. Some only show once you've opened the quest
-  or it's in your log; Worth Doing remembers what it sees.
-- Quests you dropped come from Questie's journey and from Worth Doing's own
+  or it's in your log; Worth It remembers what it sees.
+- Quests you dropped come from Questie's journey and from Worth It's own
   record. Quests dropped before you had either can't be known.
 - Found a bug? Open an issue on
-  [GitHub](https://github.com/flightpathlabs/WorthDoing/issues).
+  [GitHub](https://github.com/flightpathlabs/Worth-It/issues).
 
-Worth Doing is a fan-made addon, not affiliated with Blizzard
+Worth It is a fan-made addon, not affiliated with Blizzard
 Entertainment. It reads Questie's quest database (QuestieDB) while the game
 runs and copies none of Questie's code or data. Questie and QuestieDB are
 made by the Questie team; thank you.

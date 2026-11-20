@@ -1,12 +1,12 @@
 ## Interface: 16001
-## Title: Worth Doing
+## Title: Worth It
 ## Notes: See where a quest leads and whether it's worth doing: the rest of its chain, what it gives in XP, money and items, and quests you've missed or dropped.
 ## Version: 0.1.0
 ## Author: Flight Path Labs
-## SavedVariables: WorthDoingDB
-## IconTexture: Interface\AddOns\WorthDoing\Media\icon
+## SavedVariables: WorthItQuestsDB
+## IconTexture: Interface\AddOns\WorthItQuests\Media\icon
 ## OptionalDeps: QuestieDB, Questie
-## AddonCompartmentFunc: WorthDoing_OnAddonCompartmentClick
+## AddonCompartmentFunc: WorthItQuests_OnAddonCompartmentClick
 ## X-License: MIT
 
 # Load order matters: each group only uses what the groups above it define.

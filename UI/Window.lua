@@ -1,6 +1,6 @@
 local _, ns = ...
 
--- The Worth Doing window, from /worthdoing or the minimap's addon menu: quests worth
+-- The Worth It window, from /worth or the minimap's addon menu: quests worth
 -- a second look, in three tabs.
 --
 --   Dropped        quests you abandoned that you can still take
@@ -48,14 +48,14 @@ local TABS = {
 local function Footnote(key)
     if key == "dropped" then
         if Open.HasQuestieJourney() then
-            return "From Questie's journey, and Worth Doing's own record from now on. "
+            return "From Questie's journey, and Worth It's own record from now on. "
                 .. "Quests dropped before Questie was installed can't be known."
         end
-        return "Worth Doing keeps track of quests you abandon from now on. "
+        return "Worth It keeps track of quests you abandon from now on. "
             .. "Quests dropped before can't be known."
     end
     return "Ranked by XP for your level and by what each chain leads to. "
-        .. "Money and items count once Worth Doing has seen them."
+        .. "Money and items count once Worth It has seen them."
 end
 
 local window, scrollBox, intro, empty, footnote
@@ -152,7 +152,7 @@ local function RowOnEnter(row)
     else
         GameTooltip_AddDisabledLine(
             GameTooltip,
-            "Worth Doing doesn't know where this quest starts.",
+            "Worth It doesn't know where this quest starts.",
             true
         )
     end
@@ -351,7 +351,7 @@ local function Select(index)
 end
 
 local function CreateWindow()
-    window = CreateFrame("Frame", "WorthDoingWindow", UIParent, "ButtonFrameTemplate")
+    window = CreateFrame("Frame", "WorthItQuestsWindow", UIParent, "ButtonFrameTemplate")
     window:SetSize(WIDTH, HEIGHT)
     window:SetPoint("CENTER", 0, 40)
     window:SetFrameStrata("HIGH")
@@ -363,7 +363,7 @@ local function CreateWindow()
     window:SetScript("OnDragStart", window.StartMoving)
     window:SetScript("OnDragStop", window.StopMovingOrSizing)
     window:Hide()
-    table.insert(UISpecialFrames, "WorthDoingWindow")
+    table.insert(UISpecialFrames, "WorthItQuestsWindow")
 
     intro = window:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     intro:SetPoint("TOPLEFT", 16, -32)
@@ -415,8 +415,12 @@ local function CreateWindow()
     end)
 
     for index, tab in ipairs(TABS) do
-        local button =
-            CreateFrame("Button", "WorthDoingWindowTab" .. index, window, "PanelTabButtonTemplate")
+        local button = CreateFrame(
+            "Button",
+            "WorthItQuestsWindowTab" .. index,
+            window,
+            "PanelTabButtonTemplate"
+        )
         button:SetID(index)
         button:SetText(tab.name)
         button:SetScript("OnClick", function(self)

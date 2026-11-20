@@ -1,4 +1,4 @@
--- Luacheck configuration for Worth Doing.
+-- Luacheck configuration for Worth It.
 -- Run from the addon's folder:  luacheck .
 --
 -- There is no maintained luacheck "std" for the 12.x / Forever API, so we
@@ -20,7 +20,7 @@ ignore = {
     "212/self", -- unused "self" on script handlers is normal
 }
 
--- The only globals Worth Doing creates: its saved data, its slash command, its
+-- The only globals Worth It creates: its saved data, its slash command, its
 -- confirm dialog and the function the minimap's addon menu calls.
 globals = {
     "SlashCmdList",
@@ -28,10 +28,9 @@ globals = {
     "UISpecialFrames",
 
     -- Ours
-    "WorthDoingDB",
-    "SLASH_WORTHDOING1",
-    "SLASH_WORTHDOING2",
-    "WorthDoing_OnAddonCompartmentClick",
+    "WorthItQuestsDB",
+    "SLASH_WORTHITQUESTS1",
+    "WorthItQuests_OnAddonCompartmentClick",
 }
 
 read_globals = {

@@ -1,6 +1,6 @@
 local _, ns = ...
 
--- The words and figures Worth Doing shows, shared by the quest window, the
+-- The words and figures Worth It shows, shared by the quest window, the
 -- quest log and the map tooltips so they always say the same thing.
 
 local Text = {}

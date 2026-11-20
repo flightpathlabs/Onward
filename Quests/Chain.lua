@@ -4,7 +4,7 @@ local _, ns = ...
 --
 -- The main line follows the data's "next quest", then a breadcrumb's
 -- target, then the one quest that needs this one done first, and only
--- where the data has nothing, a link Worth Doing saw the game make. Where a
+-- where the data has nothing, a link Worth It saw the game make. Where a
 -- quest opens several others, the main line ends and the others are
 -- counted as branches: there's no telling which way the player will go,
 -- so their rewards aren't added in. Unless a later quest needs them all:
@@ -197,7 +197,7 @@ local function NextOf(info, visited)
         end
     end
 
-    -- A link Worth Doing saw the game make counts only where the data has
+    -- A link Worth It saw the game make counts only where the data has
     -- nothing at all, so a wrong one can't turn a chain the data knows.
     if not nextID and #branches == 0 and #done == 0 then
         local link = ns.db and ns.db.links[info.id]

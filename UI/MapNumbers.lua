@@ -6,7 +6,7 @@ local _, ns = ...
 -- Questie has no public way in. Its world map icons sit in map pins of a
 -- template it names after itself, each pin holding the icon; its minimap
 -- icons sit on the minimap. Either way the icon carries Questie's data for
--- it: the quest's ID, and "available" for a quest on offer. Worth Doing finds
+-- it: the quest's ID, and "available" for a quest on offer. Worth It finds
 -- them that way and adds a number of its own. If a Questie update changes
 -- any of this, the numbers just don't appear.
 --

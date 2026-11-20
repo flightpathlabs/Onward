@@ -1,7 +1,7 @@
 local _, ns = ...
 
 -- The button on the edge of the minimap: the game's own yellow "!" for a
--- quest on offer. Left-click opens the Worth Doing window, right-click the
+-- quest on offer. Left-click opens the Worth It window, right-click the
 -- options, and it can be dragged around the rim. The options can hide it.
 --
 -- Built by hand like Goldwise's and Creel's: the same art and size as other
@@ -60,7 +60,7 @@ local function ShowTooltip(self)
 end
 
 local function Create()
-    local frame = CreateFrame("Button", "WorthDoingMinimapButton", Minimap)
+    local frame = CreateFrame("Button", "WorthItQuestsMinimapButton", Minimap)
     frame:SetSize(31, 31)
     frame:SetFrameStrata("MEDIUM")
     frame:SetFrameLevel(8)
