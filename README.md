@@ -6,6 +6,10 @@ See where a quest leads in World of Warcraft: Forever, and whether it's
 worth doing. Under a quest's rewards: how many quests follow it, and what
 the rest of the chain gives.
 
+Made because our quest log was always full and we could never tell what
+was safe to drop. Worth It is meant to respect your time: put it into
+quests that lead somewhere, not dead ends.
+
 Not released yet: this is work in progress.
 
 ![The quest window](docs/images/quest-window.png)
