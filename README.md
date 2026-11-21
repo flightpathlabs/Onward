@@ -10,8 +10,6 @@ Made because our quest log was always full and we could never tell what
 was safe to drop. Worth It is meant to respect your time: put it into
 quests that lead somewhere, not dead ends.
 
-Not released yet: this is work in progress.
-
 ![The quest window](docs/images/quest-window.png)
 
 **What's in it**
